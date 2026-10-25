@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/core/">
+    <Project Path="core/PidLab.Core.Tests/PidLab.Core.Tests.csproj" />
+    <Project Path="core/PidLab.Core/PidLab.Core.csproj" />
+    <Project Path="core/PidLab.Wasm/PidLab.Wasm.csproj" />
+  </Folder>
+</Solution>
