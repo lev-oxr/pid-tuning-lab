@@ -1,5 +1,6 @@
 using PidLab.Core.Plants;
 using PidLab.Core.Simulation;
+using PidLab.Core.Tests.Support;
 
 namespace PidLab.Core.Tests;
 
@@ -17,7 +18,7 @@ public class EulerStabilityTests
     // Deviation from the steady state, k = 0 … Steps−1.
     private static double[] Deviation(double dt)
     {
-        var r = OpenLoopSimulator.Run(new Fopdt(K, T, 0), new SimulationSettings(dt, Steps * dt));
+        var r = EulerReference.Run(new Fopdt(K, T, 0), new SimulationSettings(dt, Steps * dt));
         Assert.Equal(Steps, r.Y.Length);
         return r.Y.Select(y => y - K).ToArray();
     }

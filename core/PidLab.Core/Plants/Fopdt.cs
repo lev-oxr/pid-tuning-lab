@@ -1,3 +1,6 @@
+using PidLab.Core.Linear;
+using PidLab.Core.Numerics;
+
 namespace PidLab.Core.Plants;
 
 /// <summary>W(s) = K·e^(−Ls) / (Ts + 1).</summary>
@@ -13,4 +16,8 @@ public sealed record Fopdt(double K, double T, double L) : PlantModel
 
     public double L { get; init; } = double.IsFinite(L) && L >= 0
         ? L : throw new ArgumentOutOfRangeException(nameof(L), L, "L must be finite and >= 0.");
+
+    public override double Delay => L;
+
+    public override StateSpace ToStateSpace() => new(new Matrix(new[,] { { -1 / T } }), [K / T], [1], 0);
 }

@@ -1,5 +1,6 @@
 using PidLab.Core.Plants;
 using PidLab.Core.Simulation;
+using PidLab.Core.Tests.Support;
 using Xunit.Abstractions;
 
 namespace PidLab.Core.Tests;
@@ -13,26 +14,28 @@ public class OpenLoopSimulatorAnalyticTests(ITestOutputHelper output)
     private static double Ref(Fopdt p, double t, double u = 1) =>
         t < p.L ? 0 : p.K * u * (1 - Math.Exp(-(t - p.L) / p.T));
 
-    private static double MaxError(Fopdt p, double dt, double horizon)
+    private static double MaxError(Fopdt p, double dt, double horizon, bool euler = false)
     {
-        var r = OpenLoopSimulator.Run(p, new SimulationSettings(dt, horizon));
+        var s = new SimulationSettings(dt, horizon);
+        var r = euler ? EulerReference.Run(p, s) : OpenLoopSimulator.Run(p, s);
         return r.T.Select((t, k) => Math.Abs(r.Y[k] - Ref(p, t))).Max();
     }
 
-    // T = 5, not 1: for T = 1 Euler at Δt = 0.01 gives ≈ 1.8e-3 (a property of a first-order scheme, not a bug).
+    // Phase 2: ZOH is exact; measured max error 1.1e-13, tolerance 1e-12 (≈3× margin rounded up to a power of ten).
+    // Phase 1 used 1e-3 for explicit Euler.
     [Fact]
     public void Matches_analytic_response()
     {
         var err = MaxError(new Fopdt(2, 5, 1), 0.01, 30);
         output.WriteLine($"T4.1 max|y - y_ref| = {err:E3}");
-        Assert.True(err < 1e-3, $"max error {err}");
+        Assert.True(err < 1e-12, $"max error {err}");
     }
 
     [Fact]
     public void Error_scales_linearly_with_dt()
     {
         var p = new Fopdt(1, 1, 0);
-        var ratio = MaxError(p, 0.02, 10) / MaxError(p, 0.01, 10);
+        var ratio = MaxError(p, 0.02, 10, euler: true) / MaxError(p, 0.01, 10, euler: true);
         output.WriteLine($"T4.2 err(0.02)/err(0.01) = {ratio:F4}");
         Assert.InRange(ratio, 1.8, 2.2);
     }

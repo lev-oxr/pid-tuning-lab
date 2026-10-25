@@ -1,0 +1,11 @@
+{
+  "amplitude": 1.0,
+  "cases": [
+    { "id": "fopdt",          "plant": { "type": "Fopdt",           "K": 2, "T": 5, "L": 1 },                    "dt": 0.01,  "horizon": 30, "goal": "delay, Pade" },
+    { "id": "two_tank",       "plant": { "type": "TwoTank",         "K": 2, "T1": 4, "T2": 1, "L": 0.5 },        "dt": 0.01,  "horizon": 30, "goal": "second order + delay" },
+    { "id": "two_tank_equal", "plant": { "type": "TwoTank",         "K": 1, "T1": 2, "T2": 2, "L": 0 },          "dt": 0.01,  "horizon": 30, "goal": "repeated pole, tight tolerance" },
+    { "id": "dc_motor",       "plant": { "type": "DcMotor",         "K": 3, "Tm": 0.5, "Te": 0.05 },            "dt": 0.002, "horizon": 5,  "goal": "fast plant, no delay" },
+    { "id": "integrating",    "plant": { "type": "Integrating",     "K": 0.5, "L": 2 },                         "dt": 0.01,  "horizon": 20, "goal": "integrator + Pade" },
+    { "id": "inverse",        "plant": { "type": "InverseResponse", "K": 1, "Beta": 2, "T1": 5, "T2": 2 },       "dt": 0.01,  "horizon": 40, "goal": "RHP zero, tight tolerance" }
+  ]
+}
